@@ -1,12 +1,13 @@
 package tests
 
 import (
-	"fmt"
 	"testing"
 
 	"fiber-pg-blog/entity"
 	"fiber-pg-blog/repository"
 	repo "fiber-pg-blog/repository/sqlite"
+
+	"log"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -20,13 +21,14 @@ type RepoTestSuite struct {
 	Repository repository.Repository
 }
 
-func (suite *RepoTestSuite) TearDownSuite() {
-	suite.Repository.DeleteAllUsers()
-}
+// func (suite *RepoTestSuite) TearDownSuite() {
+// 	suite.Repository.DeleteAllUsers()
+// 	log.Println("Tear down code run")
+// }
 
-func (suite *RepoTestSuite) AfterTest() {
+func (suite *RepoTestSuite) TearDownTest() {
 	suite.Repository.DeleteAllUsers()
-	fmt.Println("After test run")
+	log.Println("After test run")
 }
 
 func (suite *RepoTestSuite) TestUserDoesNotExist() {
@@ -39,23 +41,32 @@ func (suite *RepoTestSuite) TestUserDoesNotExist() {
 func (suite *RepoTestSuite) TestAddUser() {
 	user := entity.User{Username: "user", Password: "password"}
 	err := suite.Repository.AddUser(user)
-	assert.Equal(suite.T(), err, nil)
+	assert.Equal(suite.T(), nil, err)
 	userObj, _ := suite.Repository.GetUser("user")
-	assert.Equal(suite.T(), userObj.ID, uint(1))
-	assert.Equal(suite.T(), userObj.Username, "user")
-	assert.Equal(suite.T(), userObj.Password, "password")
-	suite.Repository.DeleteUser(userObj.ID)
+	log.Println(userObj)
+	assert.Equal(suite.T(), uint(1), userObj.ID,)
+	assert.Equal(suite.T(), "user", userObj.Username)
+	assert.Equal(suite.T(), "password", userObj.Password)
 }
 
 func (suite *RepoTestSuite) TestDeleteUser() {
 	user := entity.User{Username: "user_to_delete", Password: "password"}
 	suite.Repository.AddUser(user)
-	// assert.EqualError(suite.T(), err.Error, nil)
 	userObj, _ := suite.Repository.GetUser("user_to_delete")
 	suite.Repository.DeleteUser(userObj.ID)
 	users, _ := suite.Repository.GetAllUsers()
 	assert.Empty(suite.T(), users)
 }
+
+func (suite *RepoTestSuite) TestDeleteAllUsers() {
+	user1 := entity.User{Username:"first", Password: "password"}
+	user2 := entity.User{Username:"second", Password: "password"}
+	suite.Repository.AddUser(user1)
+	suite.Repository.AddUser(user2)
+	suite.Repository.DeleteAllUsers()
+	users, _ := suite.Repository.GetAllUsers()
+	assert.Empty(suite.T(), users)
+}	
 
 func TestRepos(t *testing.T) {
 	db, _ := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})

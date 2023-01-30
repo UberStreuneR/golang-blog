@@ -41,12 +41,12 @@ func (repo *SqliteRepository) AddUser(user entity.User) error {
 }
 
 func (repo *SqliteRepository) DeleteUser(ID uint) error {
-	result := repo.db.Delete(&entity.User{}, ID)
+	result := repo.db.Unscoped().Delete(&entity.User{}, ID)
 	return result.Error
 }
 
 func (repo *SqliteRepository) DeleteAllUsers() error {
-	repo.db.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&entity.User{})
+	repo.db.Unscoped().Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&entity.User{})
 	return nil
 }
 
