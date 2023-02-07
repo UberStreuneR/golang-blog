@@ -12,7 +12,7 @@ type UserInteractor struct {
 	Auth       auth.AuthUsecase
 }
 
-func (interactor *UserInteractor) SayHello(user entity.User) (message string, err error) {
+func (interactor *UserInteractor) SayHello(user *entity.User) (message string, err error) {
 	details, err := interactor.Repository.GetUser(user.Username)
 	if err != nil {
 		return message, err
@@ -21,7 +21,7 @@ func (interactor *UserInteractor) SayHello(user entity.User) (message string, er
 	return message, nil
 }
 
-func (interactor *UserInteractor) SignIn(input entity.User) (authData auth.AuthData, err error) {
+func (interactor *UserInteractor) SignIn(input *entity.User) (authData auth.AuthData, err error) {
 	details, err := interactor.Repository.GetUser(input.Username)
 	if err != nil {
 		return authData, err
@@ -33,7 +33,7 @@ func (interactor *UserInteractor) SignIn(input entity.User) (authData auth.AuthD
 	return
 }
 
-func (interactor *UserInteractor) SignUp(input entity.User) error {
+func (interactor *UserInteractor) SignUp(input *entity.User) error {
 	hashed, err := interactor.Auth.HashAndSalt(input.Password)
 	if err != nil {
 		//log here
@@ -56,8 +56,8 @@ func (interactor *UserInteractor) SignUp(input entity.User) error {
 	return nil
 }
 
-func (interactor *UserInteractor) Get(username string) (user entity.User, err error) {
-	user, err = interactor.Repository.GetUser(username)
+func (interactor *UserInteractor) Get(username string) (*entity.User, error) {
+	user, err := interactor.Repository.GetUser(username)
 	if err != nil {
 		//log
 		return user, err
@@ -65,8 +65,8 @@ func (interactor *UserInteractor) Get(username string) (user entity.User, err er
 	return user, nil
 }
 
-func (interactor *UserInteractor) GetMany() (users []entity.User, err error) {
-	users, err = interactor.Repository.GetAllUsers()
+func (interactor *UserInteractor) GetMany() (*[]entity.User, error) {
+	users, err := interactor.Repository.GetAllUsers()
 	if err != nil {
 		return users, err
 	}

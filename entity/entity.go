@@ -10,6 +10,7 @@ type User struct {
 
 type Post struct {
 	gorm.Model
-	Title string
-	Body  string
+	Title  string
+	Body   string
+	UserID uint
 }

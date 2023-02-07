@@ -6,9 +6,9 @@ import (
 )
 
 type UserUsecase interface {
-	SayHello(user entity.User) (string, error)
-	SignIn(input entity.User) (auth.AuthData, error)
-	SignUp(input entity.User) error
-	Get(username string) (entity.User, error)
-	GetMany() ([]entity.User, error)
+	SayHello(user *entity.User) (string, error)
+	SignIn(input *entity.User) (auth.AuthData, error)
+	SignUp(input *entity.User) error
+	Get(username string) (*entity.User, error)
+	GetMany() (*[]entity.User, error)
 }

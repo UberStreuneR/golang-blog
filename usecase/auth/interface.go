@@ -12,6 +12,6 @@ type AuthData struct {
 type AuthUsecase interface {
 	ComparePasswords(password1, password2 string) bool
 	CreateAuthData(username string) (AuthData, error)
-	Authenticate(details, input entity.User) (AuthData, error)
+	Authenticate(details, input *entity.User) (AuthData, error)
 	HashAndSalt(password string) (string, error)
 }
